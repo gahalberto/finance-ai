@@ -4,6 +4,8 @@ import Navbar from "../_components/navbar";
 import SummaryCards from "./_components/summary-cards";
 import TimeSelect from "./_components/time-select";
 import { isMatch } from "date-fns";
+import TransactionsPieChart from "./_components/transactions-pie-chart";
+import { getDashboard } from "../_data/get-dashboard";
 
 interface HomeProps {
   searchParams: {
@@ -12,26 +14,37 @@ interface HomeProps {
 }
 
 const Home = async ({ searchParams: { month } }: HomeProps) => {
-  // Get UserId from Clerk
   const { userId } = await auth();
-
-  // Redirect if there is no User Logged
-  if (!userId) redirect("/login");
-
-  const monthIsValid = !month || !isMatch(month, "MM");
-  if (monthIsValid) {
-    redirect("/?month=01");
+  if (!userId) {
+    redirect("/login");
   }
+  const monthIsInvalid = !month || !isMatch(month, "MM");
+  if (monthIsInvalid) {
+    redirect(`?month=${new Date().getMonth() + 1}`);
+  }
+  const dashboard = await getDashboard(month);
   return (
     <>
       <Navbar />
-      <div className="space-x-6 p-6">
+      <div className="flex h-full flex-col space-y-6 p-6">
         <div className="flex justify-between">
           <h1 className="text-2xl font-bold">Dashboard</h1>
-          <TimeSelect />
+          <div className="flex items-center gap-3">
+            <TimeSelect />
+          </div>
+        </div>
+        <div className="grid h-full grid-cols-[3fr,1fr] gap-6">
+          <div className="flex flex-col gap-6 overflow-hidden">
+            <SummaryCards month={month} {...dashboard} />
+            <div className="grid h-full grid-cols-3 grid-rows-1 gap-6">
+              <TransactionsPieChart
+                {...dashboard}
+                investmentsTotal={dashboard.investimentsTotal}
+              />
+            </div>
+          </div>
         </div>
       </div>
-      <SummaryCards month={month} />
     </>
   );
 };
