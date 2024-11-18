@@ -10,14 +10,14 @@ interface SummaryCards {
   month: string;
   balance: number;
   depositsTotal: number;
-  investimentsTotal: number;
+  investmentsTotal: number;
   expensesTotal: number;
 }
 
 const SummaryCards = async ({
   balance,
   depositsTotal,
-  investimentsTotal,
+  investmentsTotal,
   expensesTotal,
 }: SummaryCards) => {
   return (
@@ -35,7 +35,7 @@ const SummaryCards = async ({
         <SummaryCard
           icon={<PiggyBank size={16} />}
           title="Investido"
-          amount={investimentsTotal}
+          amount={investmentsTotal}
         />
         <SummaryCard
           icon={<TrendingUpIcon size={16} className="text-primary" />}
